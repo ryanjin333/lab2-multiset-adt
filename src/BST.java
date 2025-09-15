@@ -29,7 +29,7 @@ public class BST {
 
 
     public boolean isEmpty() {
-        return false; // TODO implement me!
+        return root == null;
     }
 
     public boolean contains(int item) {
@@ -47,33 +47,88 @@ public class BST {
 
 
     public void insert(int item) {
+        if (this.isEmpty()) {
+            this.root = item;
+            this.left = new BST();
+            this.right = new BST();
+        } else if (item <= this.root) {
+            this.left.insert(item);
+        } else {
+            this.right.insert(item);
+        }
 
     }
 
 
     public void delete(int item) {
-
+        if(this.isEmpty()) {
+            return;
+        }
+        if(item < this.root){
+            this.left.delete(item);
+        } else if (item > this.root) {
+            this.right.delete(item);
+        } else{
+            this.deleteRoot();
+        }
     }
 
     private void deleteRoot() {
-
+        if(this.left.isEmpty() && this.right.isEmpty()){
+            this.root = null;
+            this.left = null;
+            this.right = null;
+        } else if (this.left.isEmpty()){
+            this.root = this.right.root;
+            this.left = this.right.left;
+            this.right = this.right.right;
+        } else if (this.right.isEmpty()){
+            this.root = this.left.root;
+            this.right = this.left.right;
+            this.left = this.left.left;
+        } else {
+            this.root = this.left.extractMax();
+        }
     }
 
 
     private int extractMax() {
-        return -1;
+        if (this.right.isEmpty()){
+            int max = this.root;
+            this.deleteRoot();
+            return max;
+        }
+        return this.right.extractMax();
     }
 
     public int height() {
-        return -1;
+        if (this.isEmpty()) {
+            return 0;
+        }
+        return 1 + Math.max(this.left.height(), this.right.height());
     }
 
     public int count(int item) {
-        return -1;
+        if (this.isEmpty()){
+            return 0;
+        }
+        int count = 0;
+        if (this.root == item){
+            count =1;
+        }
+        if (item <= this.root){
+            count += this.left.count(item);
+        } else{
+            count += this.right.count(item);
+        }
+        return count;
     }
 
     public int getSize() {
-        return -1;
+        if (this.isEmpty()) {
+            return 0;
+        }
+        return 1 + this.left.getSize() + this.right.getSize();
     }
 
     public static void main(String[] args) {
