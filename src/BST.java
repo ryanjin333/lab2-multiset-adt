@@ -24,7 +24,6 @@ public class BST {
      */
     public BST() {
         root = null;
-        // left and right default to being null
     }
 
 
@@ -33,7 +32,6 @@ public class BST {
     }
 
     public boolean contains(int item) {
-        // provided as an example
         if (this.isEmpty()) {
             return false;
         } else if (item == this.root) {
@@ -60,6 +58,16 @@ public class BST {
 
 
     public void delete(int item) {
+        if(this.isEmpty()) {
+            return;
+        }
+        if(item < this.root){
+            this.left.delete(item);
+        } else if (item > this.root) {
+            this.right.delete(item);
+        } else{
+            this.deleteRoot();
+        }
         if (this.isEmpty()) {
             return;
         } else if (item == this.root) {
@@ -76,25 +84,28 @@ public class BST {
     }
 
     private void deleteRoot() {
-        if (this.left.isEmpty()) {
+        if(this.left.isEmpty() && this.right.isEmpty()){
+            this.root = null;
+            this.left = null;
+            this.right = null;
+        } else if (this.left.isEmpty()){
             this.root = this.right.root;
             this.left = this.right.left;
             this.right = this.right.right;
+        } else if (this.right.isEmpty()){
+            this.root = this.left.root;
+            this.right = this.left.right;
+            this.left = this.left.left;
         } else {
-            if (this.left != null) {
             this.root = this.left.extractMax();
-            this.left.delete(this.root);
-            }
         }
     }
 
 
     private int extractMax() {
-        if (this.right.isEmpty()) {
+        if (this.right.isEmpty()){
             int max = this.root;
-            this.root = this.left.root;
-            this.left = this.left.left;
-            this.right = this.left != null ? this.left.right : null;
+            this.deleteRoot();
             return max;
         }
         return this.right.extractMax();
@@ -108,14 +119,23 @@ public class BST {
     }
 
     public int count(int item) {
-        if (this.isEmpty()) {
-                return 0;
-        } else if (item == this.root) {
-            return 1 + this.left.count(item) + this.right.count(item);
-        } else if (item < this.root) {
-            return this.left.count(item);
+        if (this.isEmpty()){
+            return 0;
         }
-        return this.right.count(item);
+        int count = 0;
+        if (this.root == item){
+            count = 1;
+        }
+        if (item < this.root){
+            count += this.left.count(item);
+        } else if (item > this.root){
+            count += this.right.count(item);
+        } else {
+            // item == this.root, so we need to count both subtrees
+            count += this.left.count(item);
+            count += this.right.count(item);
+        }
+        return count;
     }
 
     public int getSize() {
